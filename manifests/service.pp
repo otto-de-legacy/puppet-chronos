@@ -12,7 +12,7 @@ class chronos::service {
     false => 'stopped',
   }
 
-  file { '/etc/systemd/chronos.service.erb':
+  file { '/etc/systemd/chronos.service':
     ensure  => file,
     content => template('chronos/chronos.service.erb'),
     mode    => '0444',
