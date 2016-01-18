@@ -14,12 +14,12 @@
 # [*secret*]          - secret for connecting to mesos, (default: undef)
 class chronos (
   $zk_nodes,
-  $package          = $params::package,
-  $version          = $params::version,
-  $zk_path_mesos    = $params::zk_path_mesos,
-  $zk_path_chronos  = $params::zk_path_chronos,
+  $package          = $chronos::params::package,
+  $version          = $chronos::params::version,
+  $zk_path_mesos    = $chronos::params::zk_path_mesos,
+  $zk_path_chronos  = $chronos::params::zk_path_chronos,
   $enable_service   = true,
-  $options          = $params::options,
+  $options          = $chronos::params::options,
   $secret           = undef,
 ) inherits chronos::params {
 
@@ -37,9 +37,9 @@ class chronos (
   # for mesos
   $zk_connection_string_mesos = "${zk_connection_string}${zk_path_mesos}"
 
-  Class['install']
-  -> Class['config']
-  ~> Class['service']
+  Class['::chronos::install']
+  -> Class['::chronos::config']
+  ~> Class['::chronos::service']
 
-  include install, config, service
+  include ::chronos::install, ::chronos::config, ::chronos::service
 }

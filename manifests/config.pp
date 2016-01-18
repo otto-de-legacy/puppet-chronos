@@ -6,9 +6,10 @@ class chronos::config {
   assert_private()
 
   $zk_connection_string_mesos = $chronos::zk_connection_string_mesos
-  $zk_path  = $chronos::zk_path
-  $options  = $chronos::options
-  $secret   = $chronos::secret
+  $zk_nodes        = $chronos::zk_nodes
+  $zk_path_chronos = $chronos::zk_path_chronos
+  $options         = $chronos::options
+  $secret          = $chronos::secret
 
   # TODO PR for setting chronos args via environment: https://github.com/mesosphere/chronos-pkg/pull/17
   file { '/etc/sysconfig/chronos':
