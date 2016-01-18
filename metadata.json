@@ -1,0 +1,30 @@
+{
+  "name": "ottode-chronos",
+  "version": "0.1.0",
+  "author": "OTTO GmbH & Co KG",
+  "summary": "Installs and configures chronos framework",
+  "license": "Apache-2.0",
+  "source": "https://github.com/otto-de/puppet-chronos",
+  "project_page": "https://github.com/otto-de/puppet-chronos",
+  "issues_url": "https://github.com/otto-de/puppet-chronos/issues",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">= 4.6.0 < 5.0.0"
+    }
+  ]
+}

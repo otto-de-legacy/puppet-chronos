@@ -1,0 +1,18 @@
+########################################################################
+#
+# This file is managed by puppet
+#
+########################################################################
+
+<%-
+  args = []
+  args << "--master #{@zk_connection_string_mesos}"
+  args << "--zk_hosts #{@zk_nodes.join(',')}"
+  args << "--zk_path #{@zk_path_chronos}"
+
+  @options.each do |k, v|
+    args << "--#{k} #{v}"
+  end
+-%>
+
+args=<%= args.join(' ') %>
