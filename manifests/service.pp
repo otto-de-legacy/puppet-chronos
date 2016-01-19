@@ -12,21 +12,8 @@ class chronos::service {
     false => 'stopped',
   }
 
-  file { '/etc/systemd/chronos.service':
-    ensure  => file,
-    content => template('chronos/chronos.service.erb'),
-    mode    => '0444',
-    notify  => Exec['systemctl-daemon-reload_chronos'],
-  }
-
-  exec { 'systemctl-daemon-reload_chronos':
-    command     => 'systemctl daemon-reload',
-    refreshonly => true,
-  }
-
   service { 'chronos':
-    ensure  => $ensure_service,
-    enable  => $enable_service,
-    require => Exec['systemctl-daemon-reload_chronos'],
+    ensure => $ensure_service,
+    enable => $enable_service,
   }
 }

@@ -11,6 +11,18 @@ class chronos::config {
   $options         = $chronos::options
   $secret          = $chronos::secret
 
+  file { '/etc/systemd/system/chronos.service':
+    ensure  => file,
+    content => template('chronos/chronos.service.erb'),
+    mode    => '0444',
+    notify  => Exec['systemctl-daemon-reload_chronos'],
+  }
+
+  exec { 'systemctl-daemon-reload_chronos':
+    command     => 'systemctl daemon-reload',
+    refreshonly => true,
+  }
+
   # TODO PR for setting chronos args via environment: https://github.com/mesosphere/chronos-pkg/pull/17
   file { '/etc/sysconfig/chronos':
     ensure  => file,
@@ -18,7 +30,6 @@ class chronos::config {
     owner   => 'root',
     group   => 'root',
     mode    => '0444',
-    notify  => Service['chronos'],
   }
 
   if ($secret) {
@@ -28,7 +39,6 @@ class chronos::config {
       owner   => 'root',
       group   => 'root',
       mode    => '0400',
-      notify  => Service['chronos']
     }
   }
 }
