@@ -45,6 +45,11 @@ describe 'chronos', :type => :class do
                    .with_content(/args=--master zk:\/\/10.11.12.13,10.11.12.14\/some-mesos-path --zk_hosts 10.11.12.13,10.11.12.14 --zk_path \/some\/chronos\/path --foo bar --f0_0 barr/)
       end
 
+      it 'reloads systemd' do
+        should contain_exec('systemctl-daemon-reload_chronos')
+                   .with_refreshonly('true')
+      end
+
       it 'has service enabled' do
         should contain_service('chronos')
                    .with_ensure('running')

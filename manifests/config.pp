@@ -15,12 +15,6 @@ class chronos::config {
     ensure  => file,
     content => template('chronos/chronos.service.erb'),
     mode    => '0444',
-    notify  => Exec['systemctl-daemon-reload_chronos'],
-  }
-
-  exec { 'systemctl-daemon-reload_chronos':
-    command     => 'systemctl daemon-reload',
-    refreshonly => true,
   }
 
   # TODO PR for setting chronos args via environment: https://github.com/mesosphere/chronos-pkg/pull/17

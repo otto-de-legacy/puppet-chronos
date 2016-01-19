@@ -12,8 +12,14 @@ class chronos::service {
     false => 'stopped',
   }
 
+  exec { 'systemctl-daemon-reload_chronos':
+    command     => 'systemctl daemon-reload',
+    refreshonly => true,
+  }
+
   service { 'chronos':
-    ensure => $ensure_service,
-    enable => $enable_service,
+    ensure  => $ensure_service,
+    enable  => $enable_service,
+    require => Exec['systemctl-daemon-reload_chronos'],
   }
 }
