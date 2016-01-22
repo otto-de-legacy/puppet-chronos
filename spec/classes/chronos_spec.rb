@@ -59,13 +59,17 @@ describe 'chronos', :type => :class do
       context 'with credentials' do
         let (:params) { {
             'zk_nodes' => ['10.11.12.13', '10.11.12.14'],
-            'options' => {'foo' => 'bar', 'f0_0' => 'barr'},
+            'options' => {
+                'foo' => 'bar',
+                'f0_0' => 'barr',
+                'mesos_authentication_secret_file' => '/etc/chronos/.secret',
+            },
             'version' => 'latest',
             'secret' => 'fooblewoop'
         } }
 
         it 'has credentials file' do
-          should contain_file('/root/.credentials_chronos')
+          should contain_file('/etc/chronos/.secret')
                      .with_content(/fooblewoop/)
         end
       end

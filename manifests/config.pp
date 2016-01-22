@@ -26,8 +26,8 @@ class chronos::config {
     mode    => '0444',
   }
 
-  if ($secret) {
-    file { '/root/.credentials_chronos':
+  if ($secret and $options['mesos_authentication_secret_file']) {
+    file { $options['mesos_authentication_secret_file']:
       ensure  => present,
       content => $secret,
       owner   => 'root',
