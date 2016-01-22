@@ -2,18 +2,11 @@ require 'spec_helper'
 
 describe 'chronos', :type => :class do
 
-  [
-      {
-          :operatingsystem => "RedHat",
-          :operatingsystemrelease => '7',
-      },
-      {
-          :operatingsystem => "CentOS",
-          :operatingsystemrelease => '7',
-      },
-  ].each do |os_facts|
-    context "on #{os_facts[:operatingsystem]} #{os_facts[:operatingsystemrelease]}" do
-      let (:facts) { os_facts }
+  on_supported_os.each do |os, facts|
+    context "on #{os}" do
+      let(:facts) do
+        facts
+      end
 
       let (:params) { {
           :zk_nodes => ['10.11.12.13', '10.11.12.14'],
