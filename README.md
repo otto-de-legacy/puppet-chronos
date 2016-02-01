@@ -1,7 +1,7 @@
 # Chronos Puppet Module
 
 [![Puppet
-Forge](http://img.shields.io/puppetforge/v/ottoder/chronos.svg)](https://forge.puppetlabs.com/ottoder/chronos)
+Forge](http://img.shields.io/puppetforge/v/ottode/chronos.svg)](https://forge.puppetlabs.com/ottode/chronos)
 [![Build Status](https://travis-ci.org/otto-de/puppet-chronos.svg?branch=master)](https://travis-ci.org/otto-de/puppet-chronos)
 
 Installs and configures the mesos framework chronos.
