@@ -4,6 +4,10 @@
 #
 ########################################################################
 
+<% unless @java_home.nil? and @java_home != '' %>
+JAVA_HOME=<%= @java_home %>
+<% end %>
+
 <%-
   args = []
   args << "--master #{@zk_connection_string_mesos}"

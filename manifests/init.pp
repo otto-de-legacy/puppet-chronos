@@ -11,6 +11,7 @@
 # [*zk_path_chronos*] - zookeeper path for storing chronos state, (default: '/chronos')
 # [*enable_service*]  - enable chronos service, (default: true)
 # [*options*]         - additional command line options, (default: {})
+# [*java_home*]       - set JAVA_HOME, (default: undef)
 # [*secret*]          - secret for connecting to mesos, (default: undef)
 class chronos (
   $zk_nodes,
@@ -20,6 +21,7 @@ class chronos (
   $zk_path_chronos  = $chronos::params::zk_path_chronos,
   $enable_service   = true,
   $options          = $chronos::params::options,
+  $java_home        = undef,
   $secret           = undef,
 ) inherits chronos::params {
 

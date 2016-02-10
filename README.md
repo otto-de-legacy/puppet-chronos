@@ -32,6 +32,7 @@ class { '::chronos':
  - `version` - install specific version of chronos
  - `enable_service` - enable chronos service
  - `options` - additional command line options
+ - `java_home` - set JAVA_HOME
  - `secret` - secret for connecting to mesos
 
 All of these parameters could be handled by hiera:

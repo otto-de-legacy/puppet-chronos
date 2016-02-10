@@ -29,13 +29,17 @@ describe 'chronos', :type => :class do
         should contain_file('/etc/systemd/system/chronos.service')
                    .with_ensure('file')
                    .with_content(/EnvironmentFile=-\/etc\/sysconfig\/chronos/)
-
       end
 
       it 'configures chronos' do
         should contain_file('/etc/sysconfig/chronos')
                    .with_ensure('file')
                    .with_content(/args=--master zk:\/\/10.11.12.13,10.11.12.14\/some-mesos-path --zk_hosts 10.11.12.13,10.11.12.14 --zk_path \/some\/chronos\/path --foo bar --f0_0 barr/)
+      end
+
+      it 'should not set JAVA_HOME' do
+        should_not contain_file('/etc/sysconfig/chronos')
+                       .with_content(/JAVA_HOME=/)
       end
 
       it 'reloads systemd' do
@@ -47,6 +51,18 @@ describe 'chronos', :type => :class do
         should contain_service('chronos')
                    .with_ensure('running')
                    .with_enable('true')
+      end
+
+      context 'with java_home' do
+        let (:params) { {
+            'zk_nodes' => ['10.11.12.13', '10.11.12.14'],
+            'java_home' => '/some/java/home',
+        } }
+
+        it 'should set JAVA_HOME' do
+          should contain_file('/etc/sysconfig/chronos')
+                     .with_content(/JAVA_HOME=\/some\/java\/home/)
+        end
       end
 
       context 'with credentials' do
