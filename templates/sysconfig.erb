@@ -7,6 +7,9 @@
 <% unless @java_home.nil? and @java_home != '' %>
 JAVA_HOME=<%= @java_home %>
 <% end %>
+<% @env_var.each do |k,v| %>
+<%= k %>=<%= v %>
+<% end %>
 
 <%-
   args = []

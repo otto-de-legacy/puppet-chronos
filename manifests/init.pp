@@ -21,6 +21,7 @@ class chronos (
   $zk_path_chronos  = $chronos::params::zk_path_chronos,
   $enable_service   = true,
   $options          = $chronos::params::options,
+  $env_var          = $chronos::params::env_var,
   $java_home        = undef,
   $secret           = undef,
 ) inherits chronos::params {
@@ -32,6 +33,7 @@ class chronos (
   validate_string($package)
   validate_bool($enable_service)
   validate_hash($options)
+  validate_hash($env_var)
 
   # buid zk connecton strings
   $zk_nodes_string = join($zk_nodes, ',')

@@ -9,6 +9,7 @@ class chronos::config {
   $zk_nodes        = $chronos::zk_nodes
   $zk_path_chronos = $chronos::zk_path_chronos
   $options         = $chronos::options
+  $env_var         = $chronos::env_var
   $java_home       = $chronos::java_home
   $secret          = $chronos::secret
 

@@ -65,6 +65,19 @@ describe 'chronos', :type => :class do
         end
       end
 
+      context 'with env_var' do
+        let(:params) {{
+            'zk_nodes' => ['10.11.12.13', '10.11.12.14'],
+            'env_var' => {'foo' => 'bar', 'FOO' => 'BAR'},
+        }}
+
+        it 'should set env_var' do
+          should contain_file('/etc/sysconfig/chronos')
+                     .with_content(/foo=bar/)
+                     .with_content(/FOO=BAR/)
+        end
+      end
+
       context 'with credentials' do
         let (:params) { {
             'zk_nodes' => ['10.11.12.13', '10.11.12.14'],
