@@ -3,14 +3,18 @@
 # This file is managed by puppet
 #
 ########################################################################
-
-<% unless @java_home.nil? and @java_home != '' %>
+<%# %>
+<%# ::chronos::java_home %>
+<%- unless @java_home.nil? and @java_home != '' -%>
 JAVA_HOME=<%= @java_home %>
-<% end %>
-<% @env_var.each do |k,v| %>
+<%- end -%>
+<%# %>
+<%# ::chronos::env_var %>
+<%- @env_var.each do |k,v| -%>
 <%= k %>=<%= v %>
-<% end %>
-
+<%- end -%>
+<%# %>
+<%# ::chronos::options %>
 <%-
   args = []
   args << "--master #{@zk_connection_string_mesos}"
@@ -21,5 +25,4 @@ JAVA_HOME=<%= @java_home %>
     args << "--#{k} #{v}"
   end
 -%>
-
 args=<%= args.join(' ') %>
