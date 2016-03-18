@@ -35,6 +35,11 @@ class chronos (
   validate_hash($options)
   validate_hash($env_var)
 
+  # contain all classes in module
+  contain chronos::install
+  contain chronos::config
+  contain chronos::service
+
   # buid zk connecton strings
   $zk_nodes_string = join($zk_nodes, ',')
   $zk_connection_string = "zk://${zk_nodes_string}"
