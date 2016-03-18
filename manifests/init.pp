@@ -35,20 +35,18 @@ class chronos (
   validate_hash($options)
   validate_hash($env_var)
 
-  # contain all classes in module
-  contain chronos::install
-  contain chronos::config
-  contain chronos::service
-
   # buid zk connecton strings
   $zk_nodes_string = join($zk_nodes, ',')
   $zk_connection_string = "zk://${zk_nodes_string}"
   # for mesos
   $zk_connection_string_mesos = "${zk_connection_string}${zk_path_mesos}"
 
-  Class['::chronos::install']
+  # Contain with Anchor Pattern
+  anchor { 'chronos_first': }
+  -> Class['::chronos::install']
   -> Class['::chronos::config']
   ~> Class['::chronos::service']
+  -> anchor { 'chronos_last': }
 
   include ::chronos::install, ::chronos::config, ::chronos::service
 }
