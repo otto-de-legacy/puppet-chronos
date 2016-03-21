@@ -25,6 +25,13 @@ describe 'chronos', :type => :class do
         should_not contain_file('/root/.credentials_chronos')
       end
 
+      it 'omits unspecified options' do
+        should_not contain_file('/etc/sysconfig/chronos')
+                       .with_content(/JAVA_HOME=/)
+        should_not contain_file('/etc/systemd/system/chronos.service')
+                       .with_content(/User=/)
+      end
+
       it 'creates unit file poiting to EnvironmentFile' do
         should contain_file('/etc/systemd/system/chronos.service')
                    .with_ensure('file')
@@ -66,15 +73,27 @@ describe 'chronos', :type => :class do
       end
 
       context 'with env_var' do
-        let(:params) {{
+        let(:params) { {
             'zk_nodes' => ['10.11.12.13', '10.11.12.14'],
             'env_var' => {'foo' => 'bar', 'FOO' => 'BAR'},
-        }}
+        } }
 
         it 'should set env_var' do
           should contain_file('/etc/sysconfig/chronos')
                      .with_content(/foo=bar/)
                      .with_content(/FOO=BAR/)
+        end
+      end
+
+      context 'with run_as_user' do
+        let(:params) { {
+            'zk_nodes' => ['10.11.12.13', '10.11.12.14'],
+            'run_as_user' => 'someuser',
+        } }
+
+        it 'should set User' do
+          should contain_file('/etc/systemd/system/chronos.service')
+                     .with_content(/User=someuser/)
         end
       end
 

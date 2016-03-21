@@ -33,6 +33,7 @@ class { '::chronos':
  - `enable_service` - enable chronos service
  - `options` - additional command line options
  - `java_home` - set JAVA_HOME
+ - `run_as_user` - run service under specified user
  - `secret` - secret for connecting to mesos
 
 All of these parameters could be handled by hiera:

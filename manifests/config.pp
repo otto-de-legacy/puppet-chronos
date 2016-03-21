@@ -11,6 +11,7 @@ class chronos::config {
   $options         = $chronos::options
   $env_var         = $chronos::env_var
   $java_home       = $chronos::java_home
+  $run_as_user     = $chronos::run_as_user
   $secret          = $chronos::secret
 
   file { '/etc/systemd/system/chronos.service':

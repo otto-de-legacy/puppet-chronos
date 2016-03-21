@@ -6,6 +6,9 @@ Wants=network.target
 [Service]
 EnvironmentFile=-/etc/sysconfig/chronos
 ExecStart=/usr/bin/sh -c "exec /usr/bin/chronos ${args}"
+<% if @run_as_user -%>
+User=<%= @run_as_user %>
+<% end -%>
 Restart=always
 RestartSec=20
 

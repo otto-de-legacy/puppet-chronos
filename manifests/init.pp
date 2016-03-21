@@ -12,6 +12,7 @@
 # [*enable_service*]  - enable chronos service, (default: true)
 # [*options*]         - additional command line options, (default: {})
 # [*java_home*]       - set JAVA_HOME, (default: undef)
+# [*run_as_user*]     - run service under specified user, (default: undef)
 # [*secret*]          - secret for connecting to mesos, (default: undef)
 class chronos (
   $zk_nodes,
@@ -23,6 +24,7 @@ class chronos (
   $options          = $chronos::params::options,
   $env_var          = $chronos::params::env_var,
   $java_home        = undef,
+  $run_as_user      = undef,
   $secret           = undef,
 ) inherits chronos::params {
 
