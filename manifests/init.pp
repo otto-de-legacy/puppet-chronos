@@ -43,9 +43,12 @@ class chronos (
   # for mesos
   $zk_connection_string_mesos = "${zk_connection_string}${zk_path_mesos}"
 
-  Class['::chronos::install']
+  # Contain with Anchor Pattern
+  anchor { 'chronos_first': }
+  -> Class['::chronos::install']
   -> Class['::chronos::config']
   ~> Class['::chronos::service']
+  -> anchor { 'chronos_last': }
 
   include ::chronos::install, ::chronos::config, ::chronos::service
 }
