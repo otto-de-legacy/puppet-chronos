@@ -51,17 +51,19 @@ chronos::zk_path_chronos: '/my/chronos'
 You can configure chronos jobs by including a `chronos::job` resource:
 
 ```puppet
-chronos::job{'my-job':
-  content => '{ "name": "my-job", "command": "echo hey!", ... }'
+chronos_job{'my-job':
+  chronos_url => 'http://localhost:8080',
+  content => '{ "name": "my-job", "command": "echo hey!", ... }',
 }
 ```
 
 Delete the same job by including:
 
 ```puppet
-chronos::job{'my-job':
+chronos_job{'my-job':
   ensure  => absent,
-  content => '{ "name": "my-job" }'
+  chronos_url => 'http://localhost:8080',
+  content => '{ "name": "my-job" }',
 }
 ```
 
