@@ -18,6 +18,7 @@ group :development, :unit_tests do
   gem 'json',                    :require => false
   gem 'rspec-puppet-facts'
   gem 'metadata-json-lint'
+  gem 'webmock'
 end
 
 group :system_tests do
