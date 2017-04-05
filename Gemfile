@@ -11,7 +11,7 @@ def location_for(place, fake_version = nil)
 end
 
 group :development, :unit_tests do
-  gem 'rspec-core', '3.1.7',     :require => false
+  gem 'rspec-core',              :require => false
   gem 'puppetlabs_spec_helper',  :require => false
   gem 'simplecov',               :require => false
   gem 'puppet_facts',            :require => false
