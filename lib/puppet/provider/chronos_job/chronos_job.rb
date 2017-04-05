@@ -5,7 +5,7 @@ Puppet::Type.type(:chronos_job).provide(:chronos_job) do
   def exists?
     content_json = JSON.parse(resource[:content])
 
-    uri = URI("#{resource[:chronos_url]}/scheduler/jobs")
+    uri = URI("#{resource[:chronos_url]}#{api_version}/scheduler/jobs")
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Get.new(uri.request_uri)
 
@@ -28,7 +28,7 @@ Puppet::Type.type(:chronos_job).provide(:chronos_job) do
   end
 
   def create
-    uri = URI("#{resource[:chronos_url]}/scheduler/iso8601")
+    uri = URI("#{resource[:chronos_url]}#{api_version}/scheduler/iso8601")
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Post.new(uri.request_uri, {'Content-Type' =>'application/json'})
     request.body = resource[:content]
@@ -44,7 +44,7 @@ Puppet::Type.type(:chronos_job).provide(:chronos_job) do
 
   def destroy
     content_json = JSON.parse(resource[:content])
-    uri = URI("#{resource[:chronos_url]}/scheduler/job/#{content_json['name']}")
+    uri = URI("#{resource[:chronos_url]}#{api_version}/scheduler/job/#{content_json['name']}")
     http = Net::HTTP.new(uri.host, uri.port)
     request = Net::HTTP::Delete.new(uri.request_uri, {'Content-Type' =>'application/json'})
 
@@ -68,5 +68,9 @@ Puppet::Type.type(:chronos_job).provide(:chronos_job) do
         .select { |k, _| reference_job.keys.include?(k) }
         .map { |k, v| { k => (k == 'schedule' ? v.split('/').last : v) } }
         .reduce({}, :merge)
+  end
+
+  def api_version
+    resource[:api_version].nil? || resource[:api_version].empty? ? '' : "/#{resource[:api_version]}"
   end
 end

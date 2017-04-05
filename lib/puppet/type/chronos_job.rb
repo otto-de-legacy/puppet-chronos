@@ -17,6 +17,10 @@ Puppet::Type.newtype(:chronos_job) do
       fail('Chronos URL should be a valid URL')
     end
 
+    unless self[:api_version].empty? or self[:api_version] =~ /^v\d+$/
+      fail('Chronos api version should be either empty or valid (e.g. v1)')
+    end
+
     begin
       JSON.parse(self[:content])
     rescue JSON::ParserError => e
@@ -39,6 +43,11 @@ Puppet::Type.newtype(:chronos_job) do
   newparam(:ignore_failures) do
     desc 'Ignore failures when trying to create job'
     defaultto false
+  end
+
+  newparam(:api_version) do
+    desc 'Api version of chronos'
+    defaultto ''
   end
 
 end

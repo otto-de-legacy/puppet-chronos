@@ -9,13 +9,14 @@ describe provider_class do
         Puppet::Type::Chronos_job.new(
             {:chronos_url => 'http://some-chronos-url:8080',
              :name => 'some job',
-             :content => '{ "name": "some-name", "foo": "bar" }', })
+             :content => '{ "name": "some-name", "foo": "bar" }',
+             :api_version => 'v1', })
       end
       let :provider do
         provider_class.new(resource)
       end
       it 'should detect that an equal job exists in chronos' do
-        stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_return(
                 :status => 200,
                 :headers => {'Content-Type' => 'application/json; charset=utf-8'},
@@ -26,7 +27,7 @@ describe provider_class do
       end
 
       it 'should detect that no equal job exists in chronos' do
-        stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_return(
                 :status => 200,
                 :headers => {'Content-Type' => 'application/json; charset=utf-8'},
@@ -37,23 +38,23 @@ describe provider_class do
       end
 
       it 'should return false if http errors happen on request' do
-        stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_return(
                 :status => 503,
                 :headers => {'Content-Type' => 'application/json; charset=utf-8'},
                 :body => '[{"name": "some-name", "foo": "bar"}]'
             )
         expect(provider.exists?).to be_falsey
-        end
+      end
 
       it 'should return false if exceptions happen on request' do
-        stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_raise(IOError.new('fuuuu'))
         expect(provider.exists?).to be_falsey
       end
 
       it 'should ignore fields that are not in content' do
-        stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_return(
                 :status => 200,
                 :headers => {'Content-Type' => 'application/json; charset=utf-8'},
@@ -64,7 +65,7 @@ describe provider_class do
       end
     end
 
-    context 'schedule changes' do
+    context 'no api_version given' do
       let :resource do
         Puppet::Type::Chronos_job.new(
             {:chronos_url => 'http://some-chronos-url:8080',
@@ -75,8 +76,35 @@ describe provider_class do
         provider_class.new(resource)
       end
 
-      it 'should detect changes in schedule period' do
+      it 'should change the url' do
         stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+            .to_return(
+                :status => 200,
+                :headers => {'Content-Type' => 'application/json; charset=utf-8'},
+                :body => '[{"name": "some-name", "foo": "bar"}]'
+            )
+
+        provider.exists?
+
+        expect(a_request(:get, 'http://some-chronos-url:8080/scheduler/jobs'))
+            .to have_been_made
+      end
+    end
+
+    context 'schedule changes' do
+      let :resource do
+        Puppet::Type::Chronos_job.new(
+            {:chronos_url => 'http://some-chronos-url:8080',
+             :name => 'some job',
+             :content => '{ "name": "some-name", "foo": "bar", "schedule": "R/2016-04-06T11:35:35.000+02:00/PT15M" }',
+             :api_version => 'v1', })
+      end
+      let :provider do
+        provider_class.new(resource)
+      end
+
+      it 'should detect changes in schedule period' do
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_return(
                 :status => 200,
                 :headers => {'Content-Type' => 'application/json; charset=utf-8'},
@@ -87,7 +115,7 @@ describe provider_class do
       end
 
       it 'should ignore changes in schedule time (as they change when a job is executed)' do
-        stub_request(:get, 'http://some-chronos-url:8080/scheduler/jobs')
+        stub_request(:get, 'http://some-chronos-url:8080/v1/scheduler/jobs')
             .to_return(
                 :status => 200,
                 :headers => {'Content-Type' => 'application/json; charset=utf-8'},
@@ -105,13 +133,36 @@ describe provider_class do
         Puppet::Type::Chronos_job.new(
             {:chronos_url => 'http://some-chronos-url:8080',
              :name => 'some job',
-             :content => '{ "name": "some-name", "foo": "bar" }', })
+             :content => '{ "name": "some-name", "foo": "bar" }',
+             :api_version => 'v1', })
       end
       let :provider do
         provider_class.new(resource)
       end
 
       it 'should post the content to chronos' do
+        stub_request(:post, 'http://some-chronos-url:8080/v1/scheduler/iso8601')
+        provider.create
+
+        expect(a_request(:post, 'http://some-chronos-url:8080/v1/scheduler/iso8601')
+                   .with(:body => '{ "name": "some-name", "foo": "bar" }', :headers => {"Content-Type" => 'application/json'}))
+            .to have_been_made
+
+      end
+    end
+
+    context 'no api version given' do
+      let :resource do
+        Puppet::Type::Chronos_job.new(
+            {:chronos_url => 'http://some-chronos-url:8080',
+             :name => 'some job',
+             :content => '{ "name": "some-name", "foo": "bar" }', })
+      end
+      let :provider do
+        provider_class.new(resource)
+      end
+
+      it 'should change the url' do
         stub_request(:post, 'http://some-chronos-url:8080/scheduler/iso8601')
         provider.create
 
@@ -127,14 +178,15 @@ describe provider_class do
         Puppet::Type::Chronos_job.new(
             {:chronos_url => 'http://some-chronos-url:8080',
              :name => 'some job',
-             :content => '{ "name": "some-name", "foo": "bar" }', })
+             :content => '{ "name": "some-name", "foo": "bar" }',
+             :api_version => 'v1', })
       end
       let :provider do
         provider_class.new(resource)
       end
 
       it 'fails if we chronos replies with error' do
-        stub_request(:post, 'http://some-chronos-url:8080/scheduler/iso8601').to_return(
+        stub_request(:post, 'http://some-chronos-url:8080/v1/scheduler/iso8601').to_return(
             :status => 503)
 
         expect {
@@ -143,7 +195,7 @@ describe provider_class do
       end
 
       it 'fails if creating raises an exception' do
-        stub_request(:post, 'http://some-chronos-url:8080/scheduler/iso8601').to_raise(IOError.new('fuuuu'))
+        stub_request(:post, 'http://some-chronos-url:8080/v1/scheduler/iso8601').to_raise(IOError.new('fuuuu'))
 
         expect {
           provider.create
@@ -158,6 +210,7 @@ describe provider_class do
              :name => 'some job',
              :content => '{ "name": "some-name", "foo": "bar" }',
              :ignore_failures => true,
+             :api_version => 'v1',
             })
       end
       let :provider do
@@ -165,7 +218,7 @@ describe provider_class do
       end
 
       it 'does not fail if we chronos replies with ' do
-        stub_request(:post, 'http://some-chronos-url:8080/scheduler/iso8601').to_return(
+        stub_request(:post, 'http://some-chronos-url:8080/v1/scheduler/iso8601').to_return(
             :status => 503)
 
         expect {
@@ -174,7 +227,7 @@ describe provider_class do
       end
 
       it 'does not fail if creating raises an exception' do
-        stub_request(:post, 'http://some-chronos-url:8080/scheduler/iso8601').to_raise(IOError.new('fuuuu'))
+        stub_request(:post, 'http://some-chronos-url:8080/v1/scheduler/iso8601').to_raise(IOError.new('fuuuu'))
 
         expect {
           provider.create
@@ -189,13 +242,36 @@ describe provider_class do
         Puppet::Type::Chronos_job.new(
             {:chronos_url => 'http://some-chronos-url:8080',
              :name => 'some job',
-             :content => '{ "name": "some-name", "foo": "bar" }', })
+             :content => '{ "name": "some-name", "foo": "bar" }',
+             :api_version => 'v1', })
       end
       let :provider do
         provider_class.new(resource)
       end
 
       it 'deletes the job in chronos' do
+        stub_request(:delete, 'http://some-chronos-url:8080/v1/scheduler/job/some-name')
+
+        provider.destroy
+
+        expect(a_request(:delete, 'http://some-chronos-url:8080/v1/scheduler/job/some-name')
+                   .with(:headers => {"Content-Type" => 'application/json'}))
+            .to have_been_made
+      end
+    end
+
+    context 'no api version given' do
+      let :resource do
+        Puppet::Type::Chronos_job.new(
+            {:chronos_url => 'http://some-chronos-url:8080',
+             :name => 'some job',
+             :content => '{ "name": "some-name", "foo": "bar" }', })
+      end
+      let :provider do
+        provider_class.new(resource)
+      end
+
+      it 'changes the url' do
         stub_request(:delete, 'http://some-chronos-url:8080/scheduler/job/some-name')
 
         provider.destroy
@@ -211,7 +287,8 @@ describe provider_class do
         Puppet::Type::Chronos_job.new(
             {:chronos_url => 'http://some-chronos-url:8080',
              :name => 'some job',
-             :content => '{ "name": "some-name", "foo": "bar" }', })
+             :content => '{ "name": "some-name", "foo": "bar" }',
+             :api_version => 'v1', })
       end
 
       let :provider do
@@ -219,7 +296,7 @@ describe provider_class do
       end
 
       it 'fails if we chronos replies with error' do
-        stub_request(:delete, 'http://some-chronos-url:8080/scheduler/job/some-name').to_return(
+        stub_request(:delete, 'http://some-chronos-url:8080/v1/scheduler/job/some-name').to_return(
             :status => 503)
 
         expect {
@@ -228,7 +305,7 @@ describe provider_class do
       end
 
       it 'fails if creating raises an exception' do
-        stub_request(:delete, 'http://some-chronos-url:8080/scheduler/job/some-name').to_raise(IOError.new('fuuuu'))
+        stub_request(:delete, 'http://some-chronos-url:8080/v1/scheduler/job/some-name').to_raise(IOError.new('fuuuu'))
 
         expect {
           provider.destroy
@@ -242,7 +319,8 @@ describe provider_class do
             {:chronos_url => 'http://some-chronos-url:8080',
              :name => 'some job',
              :content => '{ "name": "some-name", "foo": "bar" }',
-             :ignore_failures => true,})
+             :ignore_failures => true,
+             :api_version => 'v1', })
       end
 
       let :provider do
@@ -250,7 +328,7 @@ describe provider_class do
       end
 
       it 'fails if we chronos replies with error' do
-        stub_request(:delete, 'http://some-chronos-url:8080/scheduler/job/some-name').to_return(
+        stub_request(:delete, 'http://some-chronos-url:8080/v1/scheduler/job/some-name').to_return(
             :status => 503)
 
         expect {
@@ -259,7 +337,7 @@ describe provider_class do
       end
 
       it 'fails if creating raises an exception' do
-        stub_request(:delete, 'http://some-chronos-url:8080/scheduler/job/some-name').to_raise(IOError.new('fuuuu'))
+        stub_request(:delete, 'http://some-chronos-url:8080/v1/scheduler/job/some-name').to_raise(IOError.new('fuuuu'))
 
         expect {
           provider.destroy
