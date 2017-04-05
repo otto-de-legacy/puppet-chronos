@@ -53,6 +53,7 @@ You can configure chronos jobs by including a `chronos::job` resource:
 ```puppet
 chronos_job{'my-job':
   chronos_url => 'http://localhost:8080',
+  api_version => 'v1',
   content => '{ "name": "my-job", "command": "echo hey!", ... }',
 }
 ```
@@ -63,6 +64,7 @@ Delete the same job by including:
 chronos_job{'my-job':
   ensure  => absent,
   chronos_url => 'http://localhost:8080',
+  api_version => 'v1',
   content => '{ "name": "my-job" }',
 }
 ```
