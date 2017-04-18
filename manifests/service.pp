@@ -13,7 +13,7 @@ class chronos::service {
   }
 
   exec { 'systemctl-daemon-reload_chronos':
-    command     => 'systemctl daemon-reload',
+    command     => '/bin/systemctl daemon-reload',
     refreshonly => true,
   }
 
